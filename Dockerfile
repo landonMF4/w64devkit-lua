@@ -64,7 +64,7 @@ RUN sha256sum -c $PREFIX/src/SHA256SUMS \
  && tar xjf vim-$VIM_VERSION.tar.bz2 \
  && tar xzf lua-$LUA51_VERSION.tar.gz \
  && tar xzf lua-$LUA52_VERSION.tar.gz \
- && tar xzf luaJIT-$LUAJIT_VERSION.tar.gz
+ && tar xzf LuaJIT-$LUAJIT_VERSION.tar.gz
 COPY src/w64devkit.c src/w64devkit.ico src/libmemory.c src/libchkstk.S \
      src/alias.c src/debugbreak.c src/pkg-config.c src/vc++filt.c \
      src/peports.c src/profile $PREFIX/src/

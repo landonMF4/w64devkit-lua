@@ -2,7 +2,7 @@
 
 [![Build w64devkit-lua](https://github.com/landonMF4/w64devkit-lua/actions/workflows/build_release.yml/badge.svg)](https://github.com/landonMF4/w64devkit-lua/actions/workflows/build_release.yml)
 
-[w64devkit-lua][] is a Dockerfile that builds from source a small, portable
+[w64devkit-lua][w64devkit-lua] is a Dockerfile that builds from source a small, portable
 development suite for creating Lua C/C++ based Software and Library for Windows. See "Releases" for pre-built, ready-to-use kits.
 
 Included tools:
@@ -13,7 +13,8 @@ Included tools:
 * [busybox-w32][bb] : standard unix utilities, including sh
 * [Vim][vim] : powerful text editor
 * [Universal Ctags][ctags] : source navigation
-* [Lua/JIT] : interpreters, libraries and headers
+* [Lua][lua] : interpreter, libraries and headers
+* [LuaJIT][luajit] : just-in-time interpreter
 
 It is an MSVCRT toolchain with pthreads, C++11 threads, and OpenMP. All
 included runtime components are static. **Docker/Podman is not required to
@@ -227,4 +228,4 @@ binaries.
 [lua]: https://www.lua.org/
 [luajit]: https://luajit.org/
 [w64]: http://mingw-w64.org/
-[w64devkit]: https://github.com/skeeto/w64devkit
+[w64devkit-lua]: https://github.com/landonMF4/w64devkit-lua

@@ -20,7 +20,6 @@ ARG VIM_VERSION=9.0
 ARG LUA51_VERSION=5.1.5
 ARG LUA52_VERSION=5.2.4
 ARG LUAJIT_VERSION=2.1.ROLLING
-ARG LUAROCKS_VERSION=3.11.1
 
 RUN apt-get update && apt-get install --yes --no-install-recommends \
   build-essential curl libgmp-dev libmpc-dev libmpfr-dev m4 p7zip-full
@@ -43,7 +42,6 @@ RUN curl --insecure --location --remote-name-all --remote-header-name \
     https://lua.org/ftp/lua-$LUA51_VERSION.tar.gz \
     https://lua.org/ftp/lua-$LUA52_VERSION.tar.gz \
     https://github.com/LuaJIT/LuaJIT/archive/refs/tags/v$LUAJIT_VERSION.tar.gz \
-    https://luarocks.org/releases/luarocks-$LUAROCKS_VERSION.tar.gz \
     https://github.com/universal-ctags/ctags/archive/refs/tags/v$CTAGS_VERSION.tar.gz \
     https://downloads.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2 \
     https://downloads.sourceforge.net/project/pdcurses/pdcurses/$PDCURSES_VERSION/PDCurses-$PDCURSES_VERSION.tar.gz
@@ -64,10 +62,9 @@ RUN sha256sum -c $PREFIX/src/SHA256SUMS \
  && tar xjf mingw-w64-v$MINGW_VERSION.tar.bz2 \
  && tar xzf PDCurses-$PDCURSES_VERSION.tar.gz \
  && tar xjf vim-$VIM_VERSION.tar.bz2 \
- && tar xjf lua-$LUA51_VERSION.tar.gz \
- && tar xjf lua-$LUA52_VERSION.tar.gz \
- && tar xjf luaJIT-$LUAJIT_VERSION.tar.gz \
- && tar xjf luarocks-$LUAROCKS_VERSION.tar.gz \
+ && tar xzf lua-$LUA51_VERSION.tar.gz \
+ && tar xzf lua-$LUA52_VERSION.tar.gz \
+ && tar xzf luaJIT-$LUAJIT_VERSION.tar.gz
 COPY src/w64devkit.c src/w64devkit.ico src/libmemory.c src/libchkstk.S \
      src/alias.c src/debugbreak.c src/pkg-config.c src/vc++filt.c \
      src/peports.c src/profile $PREFIX/src/
@@ -492,7 +489,7 @@ RUN make -j$(nproc) mingw CC="$ARCH-gcc" \
  && cp src/lua52.dll $PREFIX/lib/lua/5.2/ \
  && cp src/*.h $PREFIX/include/lua/5.2/
 
-# TODO: LUAJIT AND LUAROCKS
+# TODO: LUAJIT
 
 WORKDIR /7z
 COPY src/7z.mak $PREFIX/src/

@@ -1,8 +1,9 @@
-# Portable C, C++ for x64 and x86 Windows with additional tools for Lua programming environment.
+# Portable C, C++ for x64 and x86 Windows Development Kit with additional tools for Lua programming environment.
 
-[w64devkit][] is a Dockerfile that builds from source a small, portable
-development suite for creating C and C++ applications on and for x86 and
-x64 Windows. See "Releases" for pre-built, ready-to-use kits.
+[![Build w64devkit-lua](https://github.com/landonMF4/w64devkit-lua/actions/workflows/build_release.yml/badge.svg)](https://github.com/landonMF4/w64devkit-lua/actions/workflows/build_release.yml)
+
+[w64devkit-lua][] is a Dockerfile that builds from source a small, portable
+development suite for creating Lua C/C++ based Software and Library for Windows. See "Releases" for pre-built, ready-to-use kits.
 
 Included tools:
 
@@ -12,6 +13,7 @@ Included tools:
 * [busybox-w32][bb] : standard unix utilities, including sh
 * [Vim][vim] : powerful text editor
 * [Universal Ctags][ctags] : source navigation
+* [Lua/JIT] : interpreters, libraries and headers
 
 It is an MSVCRT toolchain with pthreads, C++11 threads, and OpenMP. All
 included runtime components are static. **Docker/Podman is not required to
@@ -59,8 +61,6 @@ Then to start an interactive unix shell:
 
 * Trivial to build from source, meaning it's easy to tweak and adjust any
   part of the kit for your own requirements.
-
-* [Complements Go][go] for cgo and bootstrapping.
 
 ## Operating system support
 
@@ -224,5 +224,7 @@ binaries.
 [san]: http://mingw-w64.org/doku.php/contribute#sanitizers_asan_tsan_usan
 [san2]: https://groups.google.com/forum/#!topic/address-sanitizer/q0e5EBVKZT4
 [vim]: https://www.vim.org/
+[lua]: https://www.lua.org/
+[luajit]: https://luajit.org/
 [w64]: http://mingw-w64.org/
 [w64devkit]: https://github.com/skeeto/w64devkit

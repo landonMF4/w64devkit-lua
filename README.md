@@ -1,4 +1,4 @@
-# Portable C, C++, and Fortran Development Kit for x64 and x86 Windows
+# Portable C, C++ for x64 and x86 Windows with additional tools for Lua programming environment.
 
 [w64devkit][] is a Dockerfile that builds from source a small, portable
 development suite for creating C and C++ applications on and for x86 and

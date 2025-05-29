@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
 ARG VERSION=2.2.0
-ARG PREFIX=/w64devkit
+ARG PREFIX=/w64devkit-lua
 ARG Z7_VERSION=2301
 ARG BINUTILS_VERSION=2.44
 ARG BUSYBOX_VERSION=FRP-5579-g5749feb35
@@ -17,6 +17,10 @@ ARG MPC_VERSION=1.3.1
 ARG MPFR_VERSION=4.2.2
 ARG PDCURSES_VERSION=3.9
 ARG VIM_VERSION=9.0
+ARG LUA51_VERSION=5.1.5
+ARG LUA52_VERSION=5.2.4
+ARG LUAJIT_VERSION=2.1.ROLLING
+ARG LUAROCKS_VERSION=3.11.1
 
 RUN apt-get update && apt-get install --yes --no-install-recommends \
   build-essential curl libgmp-dev libmpc-dev libmpfr-dev m4 p7zip-full
@@ -36,6 +40,10 @@ RUN curl --insecure --location --remote-name-all --remote-header-name \
     https://ftp.gnu.org/gnu/libiconv/libiconv-$LIBICONV_VERSION.tar.gz \
     https://frippery.org/files/busybox/busybox-w32-$BUSYBOX_VERSION.tgz \
     https://ftp.nluug.nl/pub/vim/unix/vim-$VIM_VERSION.tar.bz2 \
+    https://lua.org/ftp/lua-$LUA51_VERSION.tar.gz \
+    https://lua.org/ftp/lua-$LUA52_VERSION.tar.gz \
+    https://github.com/LuaJIT/LuaJIT/archive/refs/tags/v$LUAJIT_VERSION.tar.gz \
+    https://luarocks.org/releases/luarocks-$LUAROCKS_VERSION.tar.gz \
     https://github.com/universal-ctags/ctags/archive/refs/tags/v$CTAGS_VERSION.tar.gz \
     https://downloads.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2 \
     https://downloads.sourceforge.net/project/pdcurses/pdcurses/$PDCURSES_VERSION/PDCurses-$PDCURSES_VERSION.tar.gz
@@ -55,7 +63,11 @@ RUN sha256sum -c $PREFIX/src/SHA256SUMS \
  && tar xzf make-$MAKE_VERSION.tar.gz \
  && tar xjf mingw-w64-v$MINGW_VERSION.tar.bz2 \
  && tar xzf PDCurses-$PDCURSES_VERSION.tar.gz \
- && tar xjf vim-$VIM_VERSION.tar.bz2
+ && tar xjf vim-$VIM_VERSION.tar.bz2 \
+ && tar xjf lua-$LUA51_VERSION.tar.gz \
+ && tar xjf lua-$LUA52_VERSION.tar.gz \
+ && tar xjf luaJIT-$LUAJIT_VERSION.tar.gz \
+ && tar xjf luarocks-$LUAROCKS_VERSION.tar.gz \
 COPY src/w64devkit.c src/w64devkit.ico src/libmemory.c src/libchkstk.S \
      src/alias.c src/debugbreak.c src/pkg-config.c src/vc++filt.c \
      src/peports.c src/profile $PREFIX/src/
@@ -462,6 +474,26 @@ RUN sed -i /RT_MANIFEST/d win32/ctags.rc \
         OPT= CFLAGS=-Os LDFLAGS=-s \
  && cp ctags.exe $PREFIX/bin/
 
+# LUA 51 as second, LUA 52 as main
+WORKDIR /lua-$LUA51_VERSION
+RUN make -j$(nproc) mingw CC="$ARCH-gcc" \
+ && cp src/lua.exe $PREFIX/bin/lua51.exe \
+ && cp src/luac.exe $PREFIX/bin/luac51.exe \
+ && mkdir -p $PREFIX/lib/lua/5.1 \
+ && mkdir -p $PREFIX/include/lua/5.1 \
+ && cp src/lua51.dll $PREFIX/lib/lua/5.1/ \
+ && cp src/*.h $PREFIX/include/lua/5.1/
+
+WORKDIR /lua-$LUA52_VERSION
+RUN make -j$(nproc) mingw CC="$ARCH-gcc" \
+ && cp src/*.exe $PREFIX/bin/ \
+ && mkdir $PREFIX/lib/lua/5.2 \
+ && mkdir $PREFIX/include/lua/5.2 \
+ && cp src/lua52.dll $PREFIX/lib/lua/5.2/ \
+ && cp src/*.h $PREFIX/include/lua/5.2/
+
+# TODO: LUAJIT AND LUAROCKS
+
 WORKDIR /7z
 COPY src/7z.mak $PREFIX/src/
 RUN sed -i s/CommCtrl/commctrl/ $(grep -Rl CommCtrl CPP/) \
@@ -508,6 +540,8 @@ RUN printf "id ICON \"$PREFIX/src/w64devkit.ico\"" >w64devkit.rc \
  && cat /mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/COPYING \
         >>$PREFIX/COPYING.MinGW-w64-runtime.txt \
  && echo $VERSION >$PREFIX/VERSION.txt \
- && 7z a -mx=9 -mtm=- $PREFIX.7z $PREFIX
+ && 7z a -mx=9 -mtm=- /home/$PREFIX.7z $PREFIX \
+ && cp /7z/7z.sfx /home/7z.sfx
+RUN rm -rf /*.* /x-* /7z /binutils /bootstrap /busybox* /depd /expat /gdb /gcc /gmp /gnupg /libassuan /libgcrypt /libgpg-error /libiconv /libksba /make /mingw-* /mpc /mprf /npth /pinentry /lua* /Lua* $PREFIX /winpthreads
 ENV PREFIX=${PREFIX}
 CMD cat /7z/7z.sfx $PREFIX.7z

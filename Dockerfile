@@ -473,23 +473,25 @@ RUN sed -i /RT_MANIFEST/d win32/ctags.rc \
 
 # LUA 51 as second, LUA 52 as main
 WORKDIR /lua-$LUA51_VERSION
-RUN make -j$(nproc) mingw CC="$ARCH-gcc" \
+RUN make -j$(nproc) mingw CC=$ARCH-gcc AR=$ARCH-ar RANLIB=$PREFIX/bin/ranlib \
  && cp src/lua.exe $PREFIX/bin/lua51.exe \
  && cp src/luac.exe $PREFIX/bin/luac51.exe \
- && mkdir -p $PREFIX/lib/lua/5.1 \
  && mkdir -p $PREFIX/include/lua/5.1 \
- && cp src/lua51.dll $PREFIX/lib/lua/5.1/ \
  && cp src/*.h $PREFIX/include/lua/5.1/
 
 WORKDIR /lua-$LUA52_VERSION
-RUN make -j$(nproc) mingw CC="$ARCH-gcc" \
+RUN make -j$(nproc) mingw CC=$ARCH-gcc AR=$ARCH-ar RANLIB=$PREFIX/bin/ranlib \
  && cp src/*.exe $PREFIX/bin/ \
- && mkdir $PREFIX/lib/lua/5.2 \
+ && cp src/lua52.dll $PREFIX/bin/ \
  && mkdir $PREFIX/include/lua/5.2 \
- && cp src/lua52.dll $PREFIX/lib/lua/5.2/ \
  && cp src/*.h $PREFIX/include/lua/5.2/
 
-# TODO: LUAJIT
+WORKDIR /LuaJIT-$LUAJIT_VERSION
+RUN make -j$(nproc) HOST_SYS=Windows CC=$ARCH-gcc AR=$ARCH-ar RANLIB=$PREFIX/bin/ranlib \
+ && cp src/*.exe $PREFIX/bin/ \
+ && cp src/lua51.dll $PREFIX/bin/ \
+ && mkdir $PREFIX/include/lua/jit \
+ && cp src/*.h $PREFIX/include/lua/jit
 
 WORKDIR /7z
 COPY src/7z.mak $PREFIX/src/
